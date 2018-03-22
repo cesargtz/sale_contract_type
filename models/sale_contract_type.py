@@ -44,8 +44,9 @@ class SaleContractType(models.Model):
         invoice_id = self.env['account.invoice'].search([('origin', '=', self.name)])
         for inv in invoice_id:
             if inv.state in ['open','paid']:
-                if inv.invoice_line_ids.product_id == self.order_line.product_id:
-                    self.tons_invoiced += inv.invoice_line_ids.quantity
+                for ivl in inv.invoice_line_ids:
+                    if ivl.product_id == self.order_line.product_id:
+                        self.tons_invoiced += ivl.quantity
 
     @api.one
     def _compute_priced(self):
