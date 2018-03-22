@@ -14,9 +14,10 @@ class SaleContractType(models.Model):
         ('na', 'No aplica'),
     ], default='na', required=True)
 
-    tons = fields.Float(compute="_compute_tons" , store=False, string="Toneladas Contratadas")
-    tons_sent = fields.Float(compute="_compute_tons_sent", store=False, string="Toneladas Enviadas")
-    tons_invoiced = fields.Float(compute="_compute_tons_invoiced", store=False, string="Toneladas Facturadas")
+    tons = fields.Float(compute="_compute_tons" , store=False, string="Tons Contratadas")
+    tons_sent = fields.Float(compute="_compute_tons_sent", store=False, string="Tons Enviadas")
+    tons_invoiced = fields.Float(compute="_compute_tons_invoiced", store=False, string="Tons Facturadas")
+    tons_priced = fields.Float(compute="_compute_priced" , store=False, string="Tons Preciadas")
 
 
     @api.one
@@ -40,7 +41,15 @@ class SaleContractType(models.Model):
 
     @api.one
     def _compute_tons_invoiced(self):
-        invoice_line = self.env['account.invoice.line'].search([('origin', '=', self.name)])
-        for ivl in invoice_line:
-            if ivl.product_id == self.order_line.product_id:
-                self.tons_invoiced += ivl.quantity
+        invoice_id = self.env['account.invoice'].search([('origin', '=', self.name)])
+        for inv in invoice_id:
+            if inv.state in ['open','paid']:
+                if inv.invoice_line_ids.product_id == self.order_line.product_id:
+                    self.tons_invoiced += inv.invoice_line_ids.quantity
+
+    @api.one
+    def _compute_priced(self):
+        price_id = self.env['pinup.price.sale'].search([('sale_order_id', '=', self.name)])
+        for pr in price_id:
+            if pr.state == 'close':
+                self.tons_priced += pr.pinup_tons
