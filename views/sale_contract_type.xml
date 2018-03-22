@@ -10,6 +10,7 @@
                 </field>
                 <field name="pricelist_id" position="before">
                   <field name="tons_sent"/>
+                  <field name="tons_priced"/>
                   <field name="tons_invoiced"/>
                 </field>
             </field>
@@ -21,8 +22,8 @@
             <field name="inherit_id" ref="sale.view_order_tree"/>
             <field name="arch" type="xml">
                 <field name="partner_id" position="after">
-                  <field name="tons"/>
                   <field name="tons_sent"/>
+                  <field name="tons_priced"/>
                   <field name="tons_invoiced"/>
                 </field>
             </field>
