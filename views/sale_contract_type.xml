@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <odoo>
-    
         <record model="ir.ui.view" id="sale_order_form_contract_type">
             <field name="name">sale.order.form.contract.type</field>
             <field name="model">sale.order</field>
@@ -9,9 +8,23 @@
                 <field name="partner_id" position="before">
                     <field name="contract_type"/>
                 </field>
-          
-                                  
+                <field name="pricelist_id" position="before">
+                  <field name="tons_sent"/>
+                  <field name="tons_invoiced"/>
+                </field>
             </field>
         </record>
-    
+
+        <record model="ir.ui.view" id="sale_order_tree_tons">
+            <field name="name">sale.order.tree.tons</field>
+            <field name="model">sale.order</field>
+            <field name="inherit_id" ref="sale.view_order_tree"/>
+            <field name="arch" type="xml">
+                <field name="partner_id" position="before">
+                  <field name="tons"/>
+                  <field name="tons_sent"/>
+                  <field name="tons_invoiced"/>
+                </field>
+            </field>
+        </record>
 </odoo>
