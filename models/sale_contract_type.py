@@ -30,14 +30,17 @@ class SaleContractType(models.Model):
 
     @api.one
     def _compute_tons_sent(self):
-        tons_truck, tons_wagon = 0, 0
+        tons_truck, tons_wagon, bridge = 0, 0, 0
         for tons in self.env['truck.outlet'].search([('contract_id', '=', self.name), ('state', '=', 'done')]):
             if tons.stock_picking_id:
                 tons_truck += tons.raw_kilos / 1000
         for tons in self.env['wagon.outlet'].search([('contract_id', '=', self.name), ('state', '=', 'done')]):
             if tons.stock_picking_id:
                 tons_wagon += tons.raw_kilos / 1000
-        self.tons_sent = tons_truck + tons_wagon
+        for line in self.env['bridge.warehouse'].search([('sale_order', '=', self.name), ('state','=','done')]):
+            if line.stock_picking_sale_id:
+                bridge += (line.clean_kilos/1000)
+        self.tons_sent = tons_truck + tons_wagon + bridge
 
     @api.one
     def _compute_tons_invoiced(self):
